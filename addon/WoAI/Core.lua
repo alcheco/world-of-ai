@@ -4,6 +4,9 @@ ns.Core = {}
 local Core = ns.Core
 
 Core.AGENTS = { "claude", "codex" }
+-- "Solo chat": el companion corre el agente sin carpeta de trabajo ni herramientas.
+Core.CHAT_CWD = "@chat"
+Core.CHAT_GROUP = "Solo chat"
 Core.AGENT_COLOR = { claude = "ffd97757", codex = "ff10a37f" }
 Core.AGENT_LABEL = { claude = "Claude", codex = "Codex" }
 
@@ -117,7 +120,7 @@ end
 
 -- Nombre corto del proyecto de una carpeta, según lo que exportó el companion.
 function Core:ProjectOfCwd(cwd)
-  if not cwd then return nil end
+  if not cwd or cwd == self.CHAT_CWD then return nil end
   for _, s in ipairs(self:Data().sessions or {}) do
     if s.cwd == cwd and s.project then return s.project end
   end
@@ -128,7 +131,7 @@ end
 function Core:Groups(filter, search)
   local byName, groups = {}, {}
   for _, s in ipairs(self:Sessions(filter, search)) do
-    local name = s.project or "Sin proyecto"
+    local name = s.project or Core.CHAT_GROUP
     local g = byName[name]
     if not g then
       g = { name = name, sessions = {}, updatedAt = 0, noProject = s.project == nil }

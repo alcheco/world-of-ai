@@ -157,7 +157,7 @@ end
 function UI:Open(agent, sessionId)
   state.selected = { agent = agent, id = sessionId }
   local s = Core:FindSession(agent, sessionId)
-  if s then WoAI_DB.settings.collapsedGroups[s.project or "Sin proyecto"] = nil end
+  if s then WoAI_DB.settings.collapsedGroups[s.project or Core.CHAT_GROUP] = nil end
   self.frame:Show()
   self:Refresh()
 end
@@ -379,10 +379,8 @@ function UI:Layout()
   self.msgChild:SetWidth(rw - 40)
   self.input:SetWidth(rw - 40)
   self.cwdBtn:SetWidth(math.max(120, rw - 140))
-  for _, m in ipairs(self.msgPool) do
-    m:SetWidth(self.msgWidth)
-    m.text:SetWidth(self.msgWidth - 16)
-  end
+  -- El contenido markdown se vuelve a dibujar al soltar la esquina (RefreshConversation).
+  for _, m in ipairs(self.msgPool) do m:SetWidth(self.msgWidth) end
 end
 
 function UI:BuildRight()
@@ -413,7 +411,7 @@ function UI:BuildRight()
   self.cwdBtn = Button(right, "Carpeta", rw - 140, 20)
   self.cwdBtn:SetPoint("LEFT", self.agentBtn, "RIGHT", 6, 0)
   self.cwdBtn:SetScript("OnClick", function()
-    -- Recorre: proyectos 1..n y luego 0 = "Sin proyecto".
+    -- Recorre: proyectos 1..n y luego 0 = "Solo chat".
     local ws = Core:Data().workspaces or {}
     state.newCwdIndex = (state.newCwdIndex + 1) % (#ws + 1)
     UI:RefreshConversation()
@@ -480,11 +478,13 @@ function UI:Target()
   if not sel then return nil end
   if sel.new then
     local ws = Core:Data().workspaces or {}
-    -- cwd nil = sin proyecto: el companion usa su carpeta propia.
-    return { agent = state.newAgent, sessionId = nil, cwd = ws[state.newCwdIndex] }
+    -- Índice 0 = solo chat: sin carpeta ni herramientas.
+    return { agent = state.newAgent, sessionId = nil, cwd = ws[state.newCwdIndex] or Core.CHAT_CWD }
   end
   local s = Core:FindSession(sel.agent, sel.id)
-  return { agent = sel.agent, sessionId = sel.id, cwd = s and s.cwd, session = s }
+  -- Las conversaciones sin proyecto siguen como solo chat.
+  local cwd = s and s.project and s.cwd or Core.CHAT_CWD
+  return { agent = sel.agent, sessionId = sel.id, cwd = cwd, session = s }
 end
 
 function UI:Send()
@@ -512,13 +512,10 @@ function UI:Message(i)
   m:SetBackdrop(BACKDROP)
   m.who = m:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
   m.who:SetPoint("TOPLEFT", 8, -6)
-  m.text = m:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-  m.text:SetPoint("TOPLEFT", 8, -22)
-  m.text:SetWidth(self.msgWidth - 16)
-  m.text:SetJustifyH("LEFT")
-  m.text:SetJustifyV("TOP")
-  m.text:SetSpacing(2)
-  m.text:SetNonSpaceWrap(true)
+  -- Contenedor del cuerpo; Markdown.lua dibuja ahí los bloques.
+  m.body = CreateFrame("Frame", nil, m)
+  m.body:SetPoint("TOPLEFT", 8, -22)
+  m.body:SetSize(self.msgWidth - 16, 1)
   self.msgPool[i] = m
   return m
 end
@@ -540,8 +537,11 @@ function UI:RefreshConversation()
     self.agentBtn:Show()
     self.cwdBtn:Show()
     self.agentBtn:SetText(Core.AGENT_LABEL[state.newAgent])
-    self.cwdBtn:SetText(t.cwd and string.format("|cffffd100%s|r  |cff999999%s|r", Core:Escape(Core:ProjectOfCwd(t.cwd) or ""), Core:Escape(t.cwd))
-      or "|cffaaaaaaSin proyecto|r  |cff777777(carpeta propia de WoAI)|r")
+    if t.cwd == Core.CHAT_CWD then
+      self.cwdBtn:SetText("|cff8fd3ffSolo chat|r  |cff777777(sin carpeta ni herramientas)|r")
+    else
+      self.cwdBtn:SetText(string.format("|cffffd100%s|r  |cff999999%s|r", Core:Escape(Core:ProjectOfCwd(t.cwd) or ""), Core:Escape(t.cwd)))
+    end
     self.cwdBtn:Enable()
     for _, job in ipairs(Core:PendingFor(state.newAgent, nil)) do
       table.insert(entries, { role = "pending", text = job.prompt, job = job })
@@ -551,7 +551,7 @@ function UI:RefreshConversation()
     self.cwdBtn:Hide()
     local s = t.session
     self.header:SetText(AgentTag(sel.agent) .. "  " .. Core:Escape(s and s.title or sel.id))
-    self.subheader:SetText(s and string.format("|cffffd100%s|r%s · %s · %s", Core:Escape(s.project or "sin proyecto"),
+    self.subheader:SetText(s and string.format("|cffffd100%s|r%s · %s · %s", Core:Escape(s.project or "solo chat"),
       s.worktree and (" / " .. Core:Escape(s.worktree)) or "", Core:Ago(s.updatedAt), sel.id) or "")
     Core:MarkSessionRead(sel.agent, sel.id)
     if ns.Tracker then ns.Tracker:Refresh() end
@@ -569,8 +569,6 @@ function UI:RefreshConversation()
     m:ClearAllPoints()
     m:SetPoint("TOPLEFT", 0, -y)
     m:SetWidth(self.msgWidth)
-    m.text:SetWidth(self.msgWidth - 16)
-    m.text:SetText(Core:Escape(e.text))
     if e.role == "user" then
       m.who:SetText("|cff8fd3ffTú|r  |cff777777" .. Core:Ago(e.ts) .. "|r")
       m:SetBackdropColor(0.1, 0.14, 0.2, 1)
@@ -589,9 +587,12 @@ function UI:RefreshConversation()
       m:SetBackdropBorderColor(0.5, 0.4, 0.1, 1)
     end
     local whoH = m.who:GetStringHeight()
-    m.text:ClearAllPoints()
-    m.text:SetPoint("TOPLEFT", 8, -(whoH + 10))
-    local h = m.text:GetStringHeight() + whoH + 18
+    local bodyW = self.msgWidth - 16
+    local bodyH = ns.Markdown.Render(m.body, e.text or "", bodyW)
+    m.body:ClearAllPoints()
+    m.body:SetPoint("TOPLEFT", 8, -(whoH + 10))
+    m.body:SetSize(bodyW, bodyH)
+    local h = bodyH + whoH + 18
     m:SetHeight(h)
     m:Show()
     y = y + h + 6

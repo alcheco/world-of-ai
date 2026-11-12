@@ -200,7 +200,7 @@ function T:Refresh()
       local k = KIND[e.kind]
             b.title:SetText(k.icon .. " " .. title)
       b.title:SetTextColor(k.r, k.g, k.b)
-      b.sub:SetText(string.format("%s  |cff999999%s · %s|r", k.obj, Core.AGENT_LABEL[e.job.agent] or "", Core:Escape(project or "sin proyecto")))
+      b.sub:SetText(string.format("%s  |cff999999%s · %s|r", k.obj, Core.AGENT_LABEL[e.job.agent] or "", Core:Escape(project or "solo chat")))
       b.job = e.job
       b:Show()
       shown = shown + 1

@@ -110,6 +110,7 @@ Para desinstalarlo, borra `_forever_/Interface/AddOns/WoAI` y las carpetas `WoAI
 
 - **Botón del minimapa:** clic abre la ventana, clic derecho pliega las misiones y arrastrar lo mueve por el borde. Muestra un punto verde si hay respuestas nuevas.
 - **Ventana:** se mueve arrastrando y cambia de tamaño desde la esquina inferior derecha. Recuerda posición y tamaño.
+- **Markdown en las respuestas:** títulos más grandes en dorado, bloques de código en un recuadro oscuro con su lenguaje, tablas como una cuadrícula con cabecera, listas con viñetas o números (también anidadas y con casillas), citas, y colores para **negrita**, *cursiva*, `código` y enlaces.
 - **Lista de la izquierda:** las sesiones recientes **agrupadas por proyecto** (repo). Los worktrees de Claude (`.claude/worktrees/…`) y de Codex (`~/.codex/worktrees/…`) van en el grupo de su repo. Una franja de color indica el agente: naranja para Claude, verde para Codex. Clic en un proyecto lo pliega. Hay filtros *Todos / Claude / Codex* y una búsqueda.
 - **Misiones WoAI:** un bloque bajo el rastreador de misiones con cada prompt como si fuera una misión: *Enviando…*, *Esperando respuesta* o *Respuesta lista*. Al entrar con respuestas nuevas aparece el banner "¡Misión completada!" con su sonido.
   - Clic en una misión: abre la conversación.
@@ -119,7 +120,7 @@ Para desinstalarlo, borra `_forever_/Interface/AddOns/WoAI` y las carpetas `WoAI
 - **Cuidado al continuar una sesión que tienes abierta** en Claude Code o Codex: el companion la retoma en paralelo, así que esa respuesta no aparecerá en la app que tienes abierta.
 - **Continuar una sesión:** elígela, escribe el prompt y pulsa **Enviar**. No hace falta `/reload`: la respuesta aparece sola cuando el companion termina, con el banner de misión completada.
 - **`/woai estado`:** muestra si el canal en vivo funciona, cuántos buzones quedan y cuántos prompts esperan. **`/woai poll`** carga un buzón ya.
-- **+ Nueva:** el botón de agente cambia entre Claude y Codex. El de carpeta recorre los proyectos que conoce el companion y, al final, **Sin proyecto**: la conversación corre en `~/.woai/sin-proyecto` (configurable con `noProjectDir`) y aparece en el grupo "Sin proyecto".
+- **+ Nueva:** el botón de agente cambia entre Claude y Codex. El de carpeta recorre los proyectos que conoce el companion y, al final, **Solo chat**: una conversación sin carpeta de trabajo ni herramientas, que no crea nada en el disco. Claude corre sin herramientas; Codex no permite quitarlas todas, así que corre en solo lectura. Estas conversaciones se agrupan en "Solo chat" y siguen así al continuarlas.
 - **Estados de un prompt:** *enviando…*, *en cola*, *ejecutando…*, *listo* o *error* (el error trae el mensaje del CLI). Las respuestas llegan sin `/reload` mientras queden buzones; si se acaban, haz `/reload`.
 
 ## Configuración

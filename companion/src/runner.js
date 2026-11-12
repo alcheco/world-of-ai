@@ -2,7 +2,6 @@
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
-import path from 'node:path';
 
 function run(bin, args, { cwd, input, timeoutMs }) {
   return new Promise((resolve) => {
@@ -27,32 +26,35 @@ function run(bin, args, { cwd, input, timeoutMs }) {
   });
 }
 
-/** Carpeta para conversaciones sin proyecto (se crea si no existe). */
-export function noProjectDir(cfg) {
-  const dir = cfg.noProjectDir || path.join(os.homedir(), '.woai', 'sin-proyecto');
-  fs.mkdirSync(dir, { recursive: true });
-  return dir;
-}
+// cwd que manda el addon para "Solo chat".
+export const CHAT_CWD = '@chat';
 
-function safeCwd(cwd, cfg) {
-  return cwd && fs.existsSync(cwd) ? cwd : noProjectDir(cfg);
+/**
+ * Solo chat: sin carpeta de trabajo ni herramientas. El proceso necesita un
+ * directorio, así que usa el home, pero el agente no puede leer ni tocar nada.
+ * También se usa si la carpeta de la sesión ya no existe.
+ */
+export function isChat(job) {
+  return !job.cwd || job.cwd === CHAT_CWD || !fs.existsSync(job.cwd);
 }
 
 /**
  * @param job {{agent:'claude'|'codex', sessionId?:string, cwd?:string, prompt:string}}
- *   Sin cwd = conversación sin proyecto.
  * @returns {Promise<{ok:boolean, sessionId?:string, error?:string}>}
  */
 export async function runJob(job, cfg) {
-  const cwd = safeCwd(job.cwd, cfg);
-  if (job.agent === 'claude') return runClaude(job, cfg, cwd);
-  if (job.agent === 'codex') return runCodex(job, cfg, cwd);
+  const chat = isChat(job);
+  const cwd = chat ? os.homedir() : job.cwd;
+  if (job.agent === 'claude') return runClaude(job, cfg, cwd, chat);
+  if (job.agent === 'codex') return runCodex(job, cfg, cwd, chat);
   return { ok: false, error: `agente desconocido: ${job.agent}` };
 }
 
-async function runClaude(job, cfg, cwd) {
+async function runClaude(job, cfg, cwd, chat) {
   const c = cfg.claude;
-  const args = ['-p', '--output-format', 'json', '--permission-mode', c.permissionMode, ...c.extraArgs];
+  const args = chat
+    ? ['-p', '--output-format', 'json', '--tools', '', '--strict-mcp-config']
+    : ['-p', '--output-format', 'json', '--permission-mode', c.permissionMode, ...c.extraArgs];
   if (job.sessionId) args.push('--resume', job.sessionId);
   const r = await run(c.bin, args, { cwd, input: job.prompt, timeoutMs: cfg.timeoutMs });
   let res;
@@ -67,9 +69,11 @@ async function runClaude(job, cfg, cwd) {
   return { ok: true, sessionId: res.session_id || job.sessionId };
 }
 
-async function runCodex(job, cfg, cwd) {
+async function runCodex(job, cfg, cwd, chat) {
   const c = cfg.codex;
-  const args = ['exec', '--json', '--skip-git-repo-check', '-c', `sandbox_mode="${c.sandbox}"`, ...c.extraArgs];
+  // Codex no permite quitar todas las herramientas; en chat va en solo lectura.
+  const sandbox = chat ? 'read-only' : c.sandbox;
+  const args = ['exec', '--json', '--skip-git-repo-check', '-c', `sandbox_mode="${sandbox}"`, ...(chat ? [] : c.extraArgs)];
   if (job.sessionId) args.push('resume', job.sessionId, '-');
   else args.push('-C', cwd, '-');
   const r = await run(c.bin, args, { cwd, input: job.prompt, timeoutMs: cfg.timeoutMs });
