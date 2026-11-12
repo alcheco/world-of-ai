@@ -22,6 +22,12 @@ try {
 } catch {
   /* no existe */
 }
+// Enlace roto (por ejemplo, porque se movió o renombró el repo): se reemplaza.
+if (existing?.isSymbolicLink() && !fs.existsSync(cfg.addonDir)) {
+  console.log(`Enlace roto (${fs.readlinkSync(cfg.addonDir)}). Lo reemplazo.`);
+  fs.unlinkSync(cfg.addonDir);
+  existing = undefined;
+}
 if (existing) {
   if (!(existing.isSymbolicLink() && fs.realpathSync(cfg.addonDir) === fs.realpathSync(REPO_ADDON_DIR))) {
     console.error(`${cfg.addonDir} ya existe y no apunta a este repo. Bórralo o renómbralo y vuelve a ejecutar.`);
