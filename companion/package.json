@@ -1,0 +1,14 @@
+{
+  "name": "woai-companion",
+  "version": "0.1.0",
+  "description": "Puente entre el addon WoAI de WoW Forever y los CLIs de Claude Code y Codex",
+  "type": "module",
+  "private": true,
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node src/index.js",
+    "once": "node src/index.js --once",
+    "install-addon": "node src/install.js",
+    "test": "node --test"
+  }
+}

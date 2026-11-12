@@ -1,0 +1,16 @@
+## Interface: 16001
+## Title: WoAI
+## Notes: Gestiona tus conversaciones con Claude Code y Codex desde el juego.
+## Author: Alfonso Pacheco
+## Version: 0.1.0
+## SavedVariables: WoAI_DB
+## IconTexture: Interface\Icons\INV_Misc_Book_09
+## AddonCompartmentFunc: WoAI_OnCompartmentClick
+
+Data.lua
+Core.lua
+Live.lua
+Uplink.lua
+UI.lua
+Tracker.lua
+Minimap.lua

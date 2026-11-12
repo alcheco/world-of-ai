@@ -1,0 +1,7 @@
+.DS_Store
+addon/WoAI/Data.lua
+companion/.state.json
+companion/config.json
+node_modules/
+addon/WoAI/sig/
+addon/WoAI/ctl/
