@@ -2,6 +2,7 @@
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
+import path from 'node:path';
 
 function run(bin, args, { cwd, input, timeoutMs }) {
   return new Promise((resolve) => {
@@ -26,16 +27,24 @@ function run(bin, args, { cwd, input, timeoutMs }) {
   });
 }
 
-function safeCwd(cwd) {
-  return cwd && fs.existsSync(cwd) ? cwd : os.homedir();
+/** Carpeta para conversaciones sin proyecto (se crea si no existe). */
+export function noProjectDir(cfg) {
+  const dir = cfg.noProjectDir || path.join(os.homedir(), '.woai', 'sin-proyecto');
+  fs.mkdirSync(dir, { recursive: true });
+  return dir;
+}
+
+function safeCwd(cwd, cfg) {
+  return cwd && fs.existsSync(cwd) ? cwd : noProjectDir(cfg);
 }
 
 /**
  * @param job {{agent:'claude'|'codex', sessionId?:string, cwd?:string, prompt:string}}
+ *   Sin cwd = conversación sin proyecto.
  * @returns {Promise<{ok:boolean, sessionId?:string, error?:string}>}
  */
 export async function runJob(job, cfg) {
-  const cwd = safeCwd(job.cwd);
+  const cwd = safeCwd(job.cwd, cfg);
   if (job.agent === 'claude') return runClaude(job, cfg, cwd);
   if (job.agent === 'codex') return runCodex(job, cfg, cwd);
   return { ok: false, error: `agente desconocido: ${job.agent}` };

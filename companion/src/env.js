@@ -27,7 +27,9 @@ export function projectOf(cwd, home = os.homedir()) {
     return { project: xw[2], projectPath: null, worktree };
   }
 
-  if (root === home || root === '/' || TMP.some((r) => r.test(root))) {
+  // Carpeta propia de WoAI para conversaciones sin proyecto (~/.woai/...).
+  const woaiHome = path.join(home, '.woai');
+  if (root === home || root === '/' || root === woaiHome || root.startsWith(woaiHome + '/') || TMP.some((r) => r.test(root))) {
     return { project: null, projectPath: null, worktree: null };
   }
   return { project: path.basename(root), projectPath: root, worktree };

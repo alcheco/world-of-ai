@@ -413,8 +413,9 @@ function UI:BuildRight()
   self.cwdBtn = Button(right, "Carpeta", rw - 140, 20)
   self.cwdBtn:SetPoint("LEFT", self.agentBtn, "RIGHT", 6, 0)
   self.cwdBtn:SetScript("OnClick", function()
+    -- Recorre: proyectos 1..n y luego 0 = "Sin proyecto".
     local ws = Core:Data().workspaces or {}
-    if #ws > 0 then state.newCwdIndex = state.newCwdIndex % #ws + 1 end
+    state.newCwdIndex = (state.newCwdIndex + 1) % (#ws + 1)
     UI:RefreshConversation()
   end)
 
@@ -479,6 +480,7 @@ function UI:Target()
   if not sel then return nil end
   if sel.new then
     local ws = Core:Data().workspaces or {}
+    -- cwd nil = sin proyecto: el companion usa su carpeta propia.
     return { agent = state.newAgent, sessionId = nil, cwd = ws[state.newCwdIndex] }
   end
   local s = Core:FindSession(sel.agent, sel.id)
@@ -538,8 +540,9 @@ function UI:RefreshConversation()
     self.agentBtn:Show()
     self.cwdBtn:Show()
     self.agentBtn:SetText(Core.AGENT_LABEL[state.newAgent])
-    self.cwdBtn:SetText(t.cwd and string.format("|cffffd100%s|r  |cff999999%s|r", Core:Escape(Core:ProjectOfCwd(t.cwd) or ""), Core:Escape(t.cwd)) or "(home)")
-    if #ws == 0 then self.cwdBtn:Disable() else self.cwdBtn:Enable() end
+    self.cwdBtn:SetText(t.cwd and string.format("|cffffd100%s|r  |cff999999%s|r", Core:Escape(Core:ProjectOfCwd(t.cwd) or ""), Core:Escape(t.cwd))
+      or "|cffaaaaaaSin proyecto|r  |cff777777(carpeta propia de WoAI)|r")
+    self.cwdBtn:Enable()
     for _, job in ipairs(Core:PendingFor(state.newAgent, nil)) do
       table.insert(entries, { role = "pending", text = job.prompt, job = job })
     end

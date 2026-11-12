@@ -119,7 +119,7 @@ Para desinstalarlo, borra `_forever_/Interface/AddOns/WoAI` y las carpetas `WoAI
 - **Cuidado al continuar una sesión que tienes abierta** en Claude Code o Codex: el companion la retoma en paralelo, así que esa respuesta no aparecerá en la app que tienes abierta.
 - **Continuar una sesión:** elígela, escribe el prompt y pulsa **Enviar**. No hace falta `/reload`: la respuesta aparece sola cuando el companion termina, con el banner de misión completada.
 - **`/woai estado`:** muestra si el canal en vivo funciona, cuántos buzones quedan y cuántos prompts esperan. **`/woai poll`** carga un buzón ya.
-- **+ Nueva:** el botón de agente cambia entre Claude y Codex, y el de carpeta recorre las carpetas de trabajo que conoce el companion.
+- **+ Nueva:** el botón de agente cambia entre Claude y Codex. El de carpeta recorre los proyectos que conoce el companion y, al final, **Sin proyecto**: la conversación corre en `~/.woai/sin-proyecto` (configurable con `noProjectDir`) y aparece en el grupo "Sin proyecto".
 - **Estados de un prompt:** *enviando…*, *en cola*, *ejecutando…*, *listo* o *error* (el error trae el mensaje del CLI). Las respuestas llegan sin `/reload` mientras queden buzones; si se acaban, haz `/reload`.
 
 ## Configuración
