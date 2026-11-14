@@ -1,16 +1,16 @@
 // Ejecuta un prompt con el CLI de Claude Code o Codex.
-import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
+import { spawnCli, killTree } from './bins.js';
 
 function run(bin, args, { cwd, input, timeoutMs }) {
   return new Promise((resolve) => {
-    const child = spawn(bin, args, { cwd, env: process.env, stdio: ['pipe', 'pipe', 'pipe'] });
+    const child = spawnCli(bin, args, { cwd, stdio: ['pipe', 'pipe', 'pipe'] });
     let stdout = '';
     let stderr = '';
     const timer = setTimeout(() => {
       stderr += `\n[woai] tiempo agotado tras ${Math.round(timeoutMs / 1000)}s`;
-      child.kill('SIGTERM');
+      killTree(child);
     }, timeoutMs);
     child.stdout.on('data', (b) => (stdout += b));
     child.stderr.on('data', (b) => (stderr += b));

@@ -10,7 +10,7 @@ Los addons de WoW no pueden usar la red ni ejecutar programas. Por eso WoAI tien
 |---|---|---|
 | `addon/WoAI` | Dentro del juego | Muestra la UI, lee `Data.lua` y envía cada prompt como una captura de pantalla (y, de respaldo, en `WoAI_DB.outbox`, SavedVariables). |
 | `addon` `WoAI_S001…S100` | Dentro del juego | Buzones *LoadOnDemand* por los que llegan las respuestas sin `/reload`. |
-| `companion/` | En tu Mac (Node ≥ 20) | Vigila `Screenshots/` y las SavedVariables, ejecuta cada prompt con `claude -p --resume` o `codex exec resume`, reescribe `Data.lua` con las sesiones de `~/.claude/projects` y `~/.codex/sessions` y publica cada respuesta en los buzones. |
+| `companion/` | En tu Mac (Node ≥ 22) | Vigila `Screenshots/` y las SavedVariables, ejecuta cada prompt con `claude -p --resume` o `codex exec resume`, reescribe `Data.lua` con las sesiones de `~/.claude/projects` y `~/.codex/sessions` y publica cada respuesta en los buzones. |
 
 ```
 escribes el prompt ─► captura ─► el companion lo ejecuta ─► la respuesta aparece sola
@@ -27,7 +27,7 @@ El juego solo descubre archivos que existían al arrancar, así que `npm run ins
 ### 0. Requisitos
 
 - macOS con **WoW Forever** instalado (por defecto en `/Applications/World of Warcraft/_forever_`).
-- **Node.js 20 o superior** (`node -v`).
+- **Node.js 22 o superior** (`node -v`).
 - Al menos uno de los CLIs, ya con sesión iniciada:
   - **Claude Code:** `claude` (pruébalo con `claude -p "hola"`).
   - **Codex:** `codex` (pruébalo con `codex exec "hola"`).
@@ -104,7 +104,7 @@ Deberías ver `[woai] SavedVariables vigiladas: …` y `[data] Data.lua actualiz
 | Claude responde que no puede editar | Pon `"permissionMode": "acceptEdits"` en `config.json` y reinicia el companion. |
 | Salen errores de Lua | Copia el error completo y repórtalo. |
 
-Para desinstalarlo, borra `_forever_/Interface/AddOns/WoAI` y las carpetas `WoAI_S*`.
+Para desinstalarlo: `npm run uninstall-addon` (borra `_forever_/Interface/AddOns/WoAI` y las carpetas `WoAI_S*`; si era un enlace, el repo no se toca).
 
 ## Uso
 
@@ -139,11 +139,18 @@ Crea `companion/config.json` (opcional) para cambiar los valores por defecto:
 
 - `claude.permissionMode`: con `default`, Claude **no** puede usar herramientas que pidan permiso, porque desde el juego no hay forma de aprobarlas. Usa `acceptEdits` si quieres que edite archivos.
 - `codex.sandbox`: `read-only`, `workspace-write` o `danger-full-access`.
-- También puedes indicar la carpeta del juego con la variable de entorno `WOAI_WOW_DIR`.
+- `wowDir`: si no lo pones, el companion busca WoW Forever en las rutas habituales de macOS y Windows (y, en Windows, en la instalación registrada por Battle.net).
+- `claude.bin` / `codex.bin`: nombre o ruta del CLI. El companion completa el PATH con el de tu shell de login y carpetas habituales (`~/.local/bin`, Homebrew, npm global), así que normalmente no hace falta.
+- `lang`: idioma de los mensajes del companion, `es` o `en`.
+- Variables de entorno: `WOAI_WOW_DIR` (carpeta del juego), `WOAI_LANG`, `WOAI_DATA_DIR` (dónde están `config.json` y `.state.json`; por defecto `companion/`) y `WOAI_ADDON_SRC` (copiar el addon desde otra carpeta en vez de enlazar el del repo).
 
 ## Desarrollo
 
 ```bash
-cd companion && npm test      # tests del parser/serializador Lua
+cd companion && npm test      # tests
 npm run once                  # procesa la outbox una vez y regenera Data.lua
+npm run install-addon -- --copy   # instala el addon copiándolo, como la app
+npm run build:bin             # binario único (Node SEA) en dist/woai-companion-<target>
 ```
+
+El binario es lo que empaqueta la app de escritorio (ver [docs/plan-instalador.md](docs/plan-instalador.md)). Se compila en cada plataforma con su propio Node. Con `--ipc` habla con la app por JSON; el protocolo está en [docs/companion-ipc.md](docs/companion-ipc.md).

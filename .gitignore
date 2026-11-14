@@ -5,3 +5,4 @@ companion/config.json
 node_modules/
 addon/WoAI/sig/
 addon/WoAI/ctl/
+companion/dist/

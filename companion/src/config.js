@@ -2,14 +2,47 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { detectWowDir, defaultWowDir } from './wow.js';
 
-const here = path.dirname(fileURLToPath(import.meta.url));
-export const COMPANION_DIR = path.resolve(here, '..');
+// Carpeta del paquete `companion/`. Compilado como binario se usa la carpeta
+// del ejecutable, salvo si está en companion/dist (binario de desarrollo).
+function companionDir() {
+  try {
+    if (typeof import.meta?.url === 'string') return path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  } catch {
+    /* binario empaquetado */
+  }
+  const exeDir = path.dirname(process.execPath);
+  const parent = path.dirname(exeDir);
+  if (path.basename(exeDir) === 'dist' && fs.existsSync(path.join(parent, 'package.json'))) return parent;
+  return exeDir;
+}
+
+export const COMPANION_DIR = companionDir();
 export const REPO_ADDON_DIR = path.resolve(COMPANION_DIR, '..', 'addon', 'WoAI');
 
-const DEFAULTS = {
-  // Carpeta de la instalación de WoW Forever.
-  wowDir: '/Applications/World of Warcraft/_forever_',
+/**
+ * Carpeta de config.json y .state.json. La app la pasa en WOAI_DATA_DIR
+ * (Application Support / %APPDATA%); en desarrollo es companion/.
+ */
+export function dataDir() {
+  return process.env.WOAI_DATA_DIR ? path.resolve(process.env.WOAI_DATA_DIR) : COMPANION_DIR;
+}
+
+/**
+ * De dónde sale el addon a instalar. Con WOAI_ADDON_SRC (la app pasa sus
+ * recursos) se copia; desde el repo se enlaza, para ver los cambios al momento.
+ */
+export function addonSource() {
+  if (process.env.WOAI_ADDON_SRC) return { dir: path.resolve(process.env.WOAI_ADDON_SRC), mode: 'copy' };
+  return { dir: REPO_ADDON_DIR, mode: 'link' };
+}
+
+export const DEFAULTS = {
+  // Carpeta de la instalación de WoW Forever. null = detectarla.
+  wowDir: null,
+  // Idioma de los mensajes: "es" o "en".
+  lang: 'es',
   // Cuántas sesiones exportar al juego (las más recientes).
   maxSessions: 40,
   // Mensajes por sesión (los últimos).
@@ -19,6 +52,7 @@ const DEFAULTS = {
   // Cada cuántos ms revisar cambios.
   pollMs: 3000,
   claude: {
+    // Nombre o ruta del CLI.
     bin: 'claude',
     // Modo de permisos para `claude -p`. "default" deniega herramientas que piden permiso.
     // Opciones útiles: "acceptEdits", "plan", "bypassPermissions" (cuidado).
@@ -52,15 +86,23 @@ function merge(a, b) {
   return out;
 }
 
+export function configFile() {
+  return path.join(dataDir(), 'config.json');
+}
+
 export function loadConfig() {
-  const file = path.join(COMPANION_DIR, 'config.json');
+  const dir = dataDir();
+  const file = configFile();
   let user = {};
   if (fs.existsSync(file)) user = JSON.parse(fs.readFileSync(file, 'utf8'));
   const cfg = merge(DEFAULTS, user);
   if (process.env.WOAI_WOW_DIR) cfg.wowDir = process.env.WOAI_WOW_DIR;
+  if (process.env.WOAI_LANG) cfg.lang = process.env.WOAI_LANG;
+  if (!cfg.wowDir) cfg.wowDir = detectWowDir() ?? defaultWowDir();
   cfg.home = os.homedir();
+  cfg.dataDir = dir;
   cfg.addonDir = path.join(cfg.wowDir, 'Interface', 'AddOns', 'WoAI');
-  cfg.stateFile = path.join(COMPANION_DIR, '.state.json');
+  cfg.stateFile = path.join(dir, '.state.json');
   cfg.screenshotsDir = path.join(cfg.wowDir, 'Screenshots');
   return cfg;
 }
