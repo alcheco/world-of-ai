@@ -6,3 +6,9 @@ node_modules/
 addon/WoAI/sig/
 addon/WoAI/ctl/
 companion/dist/
+# app: salida de compilación y archivos que genera scripts/prepare.mjs
+app/dist/
+app/src-tauri/target/
+app/src-tauri/gen/schemas/
+app/src-tauri/binaries/
+app/src-tauri/resources/
