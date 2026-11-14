@@ -1,16 +1,13 @@
 -- WoAI: interfaz.
 local ADDON, ns = ...
 local Core = ns.Core
+local Theme = ns.Theme
 ns.UI = {}
 local UI = ns.UI
 
 local W, H, LEFT_W = 940, 600, 290
 local MIN_W, MIN_H = 700, 420
-local BACKDROP = {
-  bgFile = "Interface\\Buttons\\WHITE8X8",
-  edgeFile = "Interface\\Buttons\\WHITE8X8",
-  edgeSize = 1,
-}
+local BACKDROP = Theme.BACKDROP
 
 local state = {
   filter = "all",
@@ -22,11 +19,10 @@ local state = {
 
 -- ---------------------------------------------------------------- helpers
 
-local function Panel(parent, r, g, b, a)
+local function Panel(parent, bgKey)
   local f = CreateFrame("Frame", nil, parent, "BackdropTemplate")
   f:SetBackdrop(BACKDROP)
-  f:SetBackdropColor(r or 0.06, g or 0.06, b or 0.08, a or 0.95)
-  f:SetBackdropBorderColor(0.25, 0.25, 0.3, 1)
+  Theme:Paint(f, bgKey or "panel", "edge")
   return f
 end
 
@@ -57,17 +53,18 @@ local function AgentTag(agent)
 end
 
 local STATUS_TEXT = {
-  queued = "|cffffd100en cola|r",
-  running = "|cffffd100ejecutando…|r",
-  done = "|cff33ff99listo|r",
-  error = "|cffff5555error|r",
+  queued = Theme:Wrap("gold", "en cola"),
+  running = Theme:Wrap("gold", "ejecutando…"),
+  done = Theme:Wrap("ok", "listo"),
+  error = Theme:Wrap("err", "error"),
 }
 
 -- ---------------------------------------------------------------- frame
 
 function UI:Init()
   if self.frame then return end
-  local f = Panel(UIParent, 0.04, 0.04, 0.06, 0.97)
+  local f = Panel(UIParent, "void")
+  Theme:WindowFrame(f)
   self.frame = f
   local size = WoAI_DB.settings.size
   f:SetSize(size and size[1] or W, size and size[2] or H)
@@ -111,9 +108,13 @@ function UI:Init()
   _G.WoAIFrame = f
   table.insert(UISpecialFrames, "WoAIFrame")
 
+  local emblem = f:CreateTexture(nil, "ARTWORK")
+  emblem:SetTexture(Theme.ICON)
+  emblem:SetSize(28, 28)
+  emblem:SetPoint("TOPLEFT", 8, -5)
   local title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-  title:SetPoint("TOPLEFT", 14, -12)
-  title:SetText("|cff8fd3ffWoAI|r  ·  Claude & Codex")
+  title:SetPoint("LEFT", emblem, "RIGHT", 6, 0)
+  title:SetText(Theme:Wrap("arcane", "WoAI") .. "  ·  " .. Theme:Wrap("gold", "Claude & Codex"))
 
   self.status = f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
   self.status:SetPoint("LEFT", title, "RIGHT", 16, 0)
@@ -239,7 +240,7 @@ function UI:GroupHeader(i)
   h.line:SetPoint("BOTTOMLEFT", 0, 2)
   h.line:SetPoint("BOTTOMRIGHT", 0, 2)
   h.line:SetHeight(1)
-  h.line:SetColorTexture(0.56, 0.83, 1, 0.35)
+  h.line:SetColorTexture(Theme:RGBA("arcane", 0.35))
   h.text = h:CreateFontString(nil, "OVERLAY", "GameFontNormal")
   h.text:SetPoint("LEFT", 2, 1)
   h.text:SetPoint("RIGHT", -2, 1)
@@ -279,7 +280,7 @@ function UI:ListButton(i)
     state.selected = { agent = self.session.agent, id = self.session.id }
     UI:Refresh()
   end)
-  b:SetScript("OnEnter", function(self) self:SetBackdropColor(0.2, 0.2, 0.28, 1) end)
+  b:SetScript("OnEnter", function(self) self:SetBackdropColor(Theme:RGBA("hover")) end)
   b:SetScript("OnLeave", function(self) UI:PaintListButton(self) end)
   self.listButtons[i] = b
   return b
@@ -289,11 +290,9 @@ function UI:PaintListButton(b)
   local sel = state.selected
   local on = sel and not sel.new and b.session and sel.agent == b.session.agent and sel.id == b.session.id
   if on then
-    b:SetBackdropColor(0.18, 0.26, 0.38, 1)
-    b:SetBackdropBorderColor(0.4, 0.6, 0.9, 1)
+    Theme:Paint(b, "select", "selectEdge")
   else
-    b:SetBackdropColor(0.1, 0.1, 0.13, 1)
-    b:SetBackdropBorderColor(0.18, 0.18, 0.22, 1)
+    Theme:Paint(b, "panel2", "rowEdge")
   end
 end
 
@@ -427,7 +426,7 @@ function UI:BuildRight()
   self.msgPool = {}
 
   -- Caja de prompt.
-  local box = Panel(right, 0.02, 0.02, 0.03, 1)
+  local box = Panel(right, "well")
   box:SetPoint("BOTTOMLEFT", 8, 36)
   box:SetPoint("BOTTOMRIGHT", -8, 36)
   box:SetHeight(84)
@@ -571,20 +570,17 @@ function UI:RefreshConversation()
     m:SetWidth(self.msgWidth)
     if e.role == "user" then
       m.who:SetText("|cff8fd3ffTú|r  |cff777777" .. Core:Ago(e.ts) .. "|r")
-      m:SetBackdropColor(0.1, 0.14, 0.2, 1)
-      m:SetBackdropBorderColor(0.2, 0.3, 0.45, 1)
+      Theme:Paint(m, "userBg", "userEdge")
     elseif e.role == "assistant" then
       m.who:SetText(AgentTag(sel.agent or state.newAgent) .. "  |cff777777" .. Core:Ago(e.ts) .. "|r")
-      m:SetBackdropColor(0.09, 0.09, 0.11, 1)
-      m:SetBackdropBorderColor(0.2, 0.2, 0.24, 1)
+      Theme:Paint(m, "agentBg", "agentEdge")
     else
       local ack = Core:Ack(e.job.id)
       local st = ack and STATUS_TEXT[ack.status]
         or (e.job.sent and "|cffffd100enviado, esperando al companion|r" or "|cffffd100enviando… (o con el próximo /reload)|r")
       local extra = ack and ack.error and ("\n|cffff5555" .. Core:Escape(ack.error) .. "|r") or ""
       m.who:SetText("|cff8fd3ffTú|r  " .. st .. extra)
-      m:SetBackdropColor(0.16, 0.13, 0.05, 1)
-      m:SetBackdropBorderColor(0.5, 0.4, 0.1, 1)
+      Theme:Paint(m, "pendingBg", "pendingEdge")
     end
     local whoH = m.who:GetStringHeight()
     local bodyW = self.msgWidth - 16

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 0 220 220" width="256" height="256">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff4c2"/><stop offset=".35" stop-color="#f2c94c"/>
+      <stop offset=".6" stop-color="#a8701a"/><stop offset=".85" stop-color="#e6b84a"/><stop offset="1" stop-color="#6b4410"/>
+    </linearGradient>
+    <linearGradient id="goldIn" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#fff4c2"/><stop offset=".5" stop-color="#c08a26"/><stop offset="1" stop-color="#5a370a"/>
+    </linearGradient>
+    <radialGradient id="arc" cx=".5" cy=".42" r=".6">
+      <stop offset="0" stop-color="#1f4f80"/><stop offset=".6" stop-color="#0d2440"/><stop offset="1" stop-color="#040b16"/>
+    </radialGradient>
+    <radialGradient id="gem" cx=".4" cy=".35" r=".7">
+      <stop offset="0" stop-color="#e8f7ff"/><stop offset=".4" stop-color="#8fd3ff"/><stop offset="1" stop-color="#1b5d96"/>
+    </radialGradient>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter>
+  </defs>
+  <path d="M100 4 L118 26 L100 40 L82 26 Z" fill="url(#gold)" stroke="#2a1a05" stroke-width="2.5"/>
+  <path d="M100 12 L110 26 L100 34 L90 26 Z" fill="url(#gem)"/>
+  <path d="M22 70 L4 58 L14 96 Z M178 70 L196 58 L186 96 Z" fill="url(#gold)" stroke="#2a1a05" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="100" cy="118" r="92" fill="url(#gold)" stroke="#2a1a05" stroke-width="3"/>
+  <circle cx="100" cy="118" r="80" fill="url(#goldIn)" stroke="#2a1a05" stroke-width="2"/>
+  <g fill="#fff1b8" stroke="#3a2405" stroke-width="1.5">
+    <circle cx="100" cy="32" r="4"/><circle cx="186" cy="118" r="4"/><circle cx="100" cy="204" r="4"/><circle cx="14" cy="118" r="4"/>
+    <circle cx="161" cy="57" r="3.2"/><circle cx="161" cy="179" r="3.2"/><circle cx="39" cy="179" r="3.2"/><circle cx="39" cy="57" r="3.2"/>
+  </g>
+  <circle cx="100" cy="118" r="72" fill="url(#arc)" stroke="#000" stroke-width="2"/>
+  <circle cx="100" cy="118" r="62" fill="none" stroke="#8fd3ff" stroke-opacity=".35" stroke-width="1.2" stroke-dasharray="2 6"/>
+  <path filter="url(#soft)" opacity=".9" fill="none" stroke="#8fd3ff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" d="M58 90 Q58 80 68 80 H132 Q142 80 142 90 V136 Q142 146 132 146 H92 L72 164 L76 146 H68 Q58 146 58 136 Z"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke="#dff4ff" stroke-width="5" d="M58 90 Q58 80 68 80 H132 Q142 80 142 90 V136 Q142 146 132 146 H92 L72 164 L76 146 H68 Q58 146 58 136 Z"/>
+    <path d="M78 100 L96 113 L78 126" stroke="#8fd3ff" stroke-width="7"/>
+    <path d="M104 128 H124" stroke="#ffd100" stroke-width="7"/>
+  </g>
+  <g fill="#dff4ff">
+    <path d="M150 64 l2 6 6 2 -6 2 -2 6 -2 -6 -6 -2 6 -2z"/><path d="M48 160 l1.5 4.5 4.5 1.5 -4.5 1.5 -1.5 4.5 -1.5 -4.5 -4.5 -1.5 4.5 -1.5z"/>
+  </g>
+</svg>
