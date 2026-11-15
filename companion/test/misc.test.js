@@ -40,3 +40,23 @@ test('t formatea parámetros e idioma', () => {
   assert.equal(new KeyedError('woai.badCommand', { cmd: 'x' }).message, 'Unknown command: x');
   setLang('es');
 });
+
+import { claudeOptions, codexOptions } from '../src/runner.js';
+
+test('claudeOptions convierte los permisos en flags', () => {
+  assert.deepEqual(claudeOptions({ permissionMode: 'acceptEdits', extraArgs: [] }), []);
+  assert.deepEqual(
+    claudeOptions({ model: 'opus', allowedTools: ['Bash(git *)', ' WebFetch '], disallowedTools: 'Bash(rm *)\n', mcp: 'none', extraArgs: ['--verbose'] }),
+    ['--model', 'opus', '--allowedTools', 'Bash(git *),WebFetch', '--disallowedTools', 'Bash(rm *)', '--strict-mcp-config', '--verbose'],
+  );
+});
+
+test('codexOptions: red solo con workspace-write', () => {
+  assert.deepEqual(codexOptions({ sandbox: 'workspace-write', networkAccess: true, model: 'gpt-5' }), [
+    '-m',
+    'gpt-5',
+    '-c',
+    'sandbox_workspace_write.network_access=true',
+  ]);
+  assert.deepEqual(codexOptions({ sandbox: 'read-only', networkAccess: true }), []);
+});

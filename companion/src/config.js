@@ -57,12 +57,22 @@ export const DEFAULTS = {
     // Modo de permisos para `claude -p`. "default" deniega herramientas que piden permiso.
     // Opciones útiles: "acceptEdits", "plan", "bypassPermissions" (cuidado).
     permissionMode: 'default',
+    // Modelo (vacío = el del CLI).
+    model: '',
+    // Reglas de herramientas: ["Bash(git *)", "WebFetch"…] → --allowedTools / --disallowedTools.
+    allowedTools: [],
+    disallowedTools: [],
+    // MCP: "default" (los configurados en Claude) o "none" (--strict-mcp-config).
+    mcp: 'default',
     extraArgs: [],
   },
   codex: {
     bin: 'codex',
     // Sandbox para `codex exec`: "read-only" | "workspace-write" | "danger-full-access".
     sandbox: 'workspace-write',
+    model: '',
+    // Acceso a red dentro de workspace-write.
+    networkAccess: false,
     extraArgs: [],
   },
   // Tiempo máximo por prompt.

@@ -19,7 +19,7 @@ import { publishLive, liveInstalled } from './live.js';
 import { scanScreenshots } from './uplink.js';
 import { writeAtomic } from './fsx.js';
 import { log, emit, setIpc, setLang, t, KeyedError } from './log.js';
-import { installAddon, uninstallAddon, addonStatus } from './addon.js';
+import { installAddon, uninstallAddon, addonStatus, addonVersion } from './addon.js';
 import { findWowDirs, isWowDir } from './wow.js';
 import { probeCli, killAll } from './bins.js';
 
@@ -231,6 +231,9 @@ function statusData() {
     wowOk: isWowDir(cfg.wowDir),
     dataDir: cfg.dataDir,
     addon: addonStatus(cfg),
+    // Versión del addon que trae esta instalación (para ofrecer actualizarlo).
+    bundledAddon: addonVersion(addonSource().dir),
+    addonMode: addonSource().mode,
     liveOk,
     savedVariables: savedVariablesFiles(cfg).filter((f) => fs.existsSync(f)).length,
     sessions: sessionCount,

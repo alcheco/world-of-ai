@@ -1,0 +1,80 @@
+# Publica WoAI: al subir un tag vX.Y.Z compila los instaladores y los deja en
+# un Release *borrador* de GitHub, junto con latest.json para el actualizador.
+#   node scripts/bump.mjs 0.2.0 && git commit -am "v0.2.0" && git tag v0.2.0 && git push --follow-tags
+# Revisa el borrador y publícalo: desde ese momento las apps instaladas lo ven.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest # Apple Silicon
+            args: --bundles app,dmg
+          - os: macos-15-intel # Intel
+            args: --bundles app,dmg
+          - os: windows-latest
+            args: --bundles nsis
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            companion/package-lock.json
+            app/package-lock.json
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: app/src-tauri -> target
+
+      - name: Companion (tests)
+        working-directory: companion
+        run: |
+          npm ci
+          npm test
+
+      - name: App (dependencias)
+        working-directory: app
+        run: npm ci
+
+      # beforeBuildCommand compila el sidecar del companion con Node SEA y copia el addon.
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          # Con CI=true el .dmg se arma sin la disposición de Finder (fondo, flecha, enlace a Aplicaciones).
+          CI: false
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          # Firma y notarización de Apple (opcional; sin ellas la app va sin notarizar).
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        with:
+          projectPath: app
+          tagName: ${{ github.ref_name }}
+          releaseName: WoAI ${{ github.ref_name }}
+          releaseBody: |
+            **macOS:** descarga el `.dmg` (aarch64 = Apple Silicon, x64 = Intel), ábrelo y arrastra WoAI a Aplicaciones.
+            **Windows:** descarga y ejecuta `WoAI_…_x64-setup.exe`.
+            Si ya tienes WoAI, se actualiza solo.
+          releaseDraft: true
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          args: ${{ matrix.args }}
