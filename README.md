@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/banner.png" alt="WoAI · Claude · Codex: your Claude Code and Codex conversations, without leaving WoW Forever" width="100%"></p>
+<p align="center"><img src="assets/banner.png" alt="WoAI · Get work done!" width="100%"></p>
 
 # WoAI
 

@@ -2,7 +2,7 @@
 type Dict = Record<string, string>;
 
 const es: Dict = {
-  'app.tagline': 'Claude Code y Codex dentro de WoW Forever',
+  'app.tagline': 'Get work done!',
 
   'nav.status': 'Estado',
   'nav.agents': 'Agentes',
@@ -171,7 +171,7 @@ const es: Dict = {
 };
 
 const en: Dict = {
-  'app.tagline': 'Claude Code and Codex inside WoW Forever',
+  'app.tagline': 'Get work done!',
 
   'nav.status': 'Status',
   'nav.agents': 'Agents',

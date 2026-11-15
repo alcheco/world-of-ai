@@ -31,7 +31,7 @@
     "targets": "all",
     "createUpdaterArtifacts": true,
     "category": "Utility",
-    "shortDescription": "Claude Code y Codex dentro de WoW Forever",
+    "shortDescription": "Get work done!",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
