@@ -32,11 +32,12 @@ html,body{margin:0;background:#07090d}
 
 .arrow{position:absolute;top:190px;left:258px;width:146px;height:26px;margin-top:-13px}
 
-.hint{position:absolute;left:0;right:0;text-align:center;font-family:"Alegreya Sans",sans-serif}
-.hint.main{top:300px;font-size:14px;font-weight:500;color:#d7dde6;letter-spacing:.02em}
-.hint.main b{color:#ffd100;font-weight:500}
-.hint.sub{top:322px;font-size:12px;color:#7d8899}
-.sep{color:#6b5226;margin:0 8px}
+/* Placa de pergamino bajo cada icono: Finder pinta el nombre en oscuro (16 pt) justo
+   debajo del icono de 128 pt, y sobre el fondo azul no se leía. */
+.plate{position:absolute;top:257px;width:150px;height:28px;margin-left:-75px;border-radius:6px;box-sizing:border-box;
+  background:linear-gradient(180deg,#f6ecd2,#e2d1a6);border:1px solid #c9a24a;
+  box-shadow:0 0 0 1px #3a2405,0 3px 8px rgba(0,0,0,.6),0 0 18px rgba(255,226,122,.18)}
+
 
 .palette{position:absolute;left:0;right:0;bottom:0;height:4px;display:flex}
 .palette i{flex:1}
@@ -52,6 +53,8 @@ html,body{margin:0;background:#07090d}
 
   <div class="halo" style="left:180px"></div>
   <div class="halo" style="left:480px"></div>
+  <div class="plate" style="left:180px"></div>
+  <div class="plate" style="left:480px"></div>
 
   <svg class="arrow" viewBox="0 0 146 26">
     <defs>
@@ -63,8 +66,6 @@ html,body{margin:0;background:#07090d}
     <path d="M120 2 L144 13 L120 24 L126 13 Z" fill="#ffd100" stroke="#4a2e06" stroke-width="1" stroke-linejoin="round"/>
   </svg>
 
-  <div class="hint main">Arrastra <b>WoAI</b> a Aplicaciones<span class="sep">◆</span>Drag <b>WoAI</b> to Applications</div>
-  <div class="hint sub">Después ábrelo desde Aplicaciones<span class="sep">·</span>Then open it from Applications</div>
 
   <div class="palette">
     <i style="background:#8fd3ff"></i><i style="background:#ffd100"></i><i style="background:#c9a24a"></i>
