@@ -35,7 +35,11 @@ section{display:flex;flex-direction:column;gap:20px}
 .lockup{display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center}
 .lockup svg{width:clamp(110px,22vw,168px);height:auto;flex:none}
 .wordmark{display:flex;flex-direction:column;align-items:center;gap:6px}
-.wm{font:900 clamp(64px,13vw,124px)/.9 var(--f-logo);letter-spacing:.01em;
+/* Los remates de Cinzel Decorative salen de la caja del texto: el padding agranda la caja
+   donde se pinta el degradado y el margen negativo lo compensa en el layout. */
+.wm .o,.wm-flat .o,.wm-mono .o,.o-min{font-size:.72em}
+.wm .o{background:inherit;-webkit-background-clip:text;background-clip:text}
+.wm{font:900 clamp(64px,13vw,124px)/1 var(--f-logo);letter-spacing:.01em;padding:.32em .18em .26em;margin:-.32em -.18em -.26em;
   background:linear-gradient(180deg,#fff7d1 0%,#ffe27a 30%,#e0a823 55%,#a8701a 75%,#f5cf62 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
   filter:drop-shadow(0 2px 0 #3a2405) drop-shadow(0 0 1px #000) drop-shadow(0 6px 10px rgba(0,0,0,.8));
@@ -190,7 +194,7 @@ footer{color:var(--muted);font-size:14px;text-align:center}
   <div class="lockup">
     <svg viewBox="0 0 200 220" role="img" aria-label="Emblema de WoAI"><use href="#emblem"/></svg>
     <div class="wordmark">
-      <div class="wm" aria-label="WoAI">WoAI</div>
+      <div class="wm" aria-label="WoAI">W<span class="o">o</span>AI</div>
       <div class="ribbon">Claude · Codex</div>
     </div>
   </div>
@@ -218,14 +222,14 @@ footer{color:var(--muted);font-size:14px;text-align:center}
     <div class="variant frame">
       <div class="stage parch">
         <svg viewBox="0 0 200 220" width="64" height="70" style="color:#2a1a05;--knock:#e9dcb8" aria-hidden="true"><use href="#emblem-flat"/></svg>
-        <span class="wm-flat">WoAI</span>
+        <span class="wm-flat">W<span class="o">o</span>AI</span>
       </div>
       <div class="label"><b>Monocromo sobre pergamino.</b> Documentación impresa y sellos.</div>
     </div>
     <div class="variant frame">
       <div class="stage black">
         <svg viewBox="0 0 200 220" width="64" height="70" style="color:#fff;--knock:#000" aria-hidden="true"><use href="#emblem-flat"/></svg>
-        <span class="wm-mono">WoAI</span>
+        <span class="wm-mono">W<span class="o">o</span>AI</span>
       </div>
       <div class="label"><b>Monocromo invertido.</b> Fondos de captura y vídeo.</div>
     </div>
@@ -257,8 +261,8 @@ footer{color:var(--muted);font-size:14px;text-align:center}
   <div class="type-grid">
     <div class="spec frame">
       <h3>Logotipo</h3>
-      <div class="sample" style="font:900 40px/1 var(--f-logo);color:var(--gold)">WoAI</div>
-      <dl><dt>Web</dt><dd>Cinzel Decorative 900</dd><dt>Juego</dt><dd>textura del logotipo, nunca texto</dd></dl>
+      <div class="sample" style="font:900 40px/1 var(--f-logo);color:var(--gold)">W<span class="o-min">o</span>AI</div>
+      <dl><dt>Web</dt><dd>Cinzel Decorative 900</dd><dt>La “o”</dt><dd>72 % del cuerpo, sobre la línea base</dd><dt>Juego</dt><dd>textura del logotipo, nunca texto</dd></dl>
     </div>
     <div class="spec frame">
       <h3>Títulos</h3>
@@ -368,12 +372,15 @@ ns.Theme = {
       <li>Bordes de ventana en bronce con un filo negro, como los marcos del cliente.</li>
       <li>Estado siempre en dos sitios: franja de color y texto.</li>
       <li>Emblema sin alas por debajo de 32 px.</li>
+      <li>En el logotipo, la “o” va al 72 % del tamaño de las mayúsculas para que se lea como minúscula: W·o·AI.</li>
+      <li>Deja aire arriba y abajo del logotipo: los remates de la W y la A sobresalen y el dorado debe cubrirlos enteros.</li>
     </ul></div>
     <div class="frame dont"><h3>No</h3><ul>
       <li>Usar logotipos, tipografías ni arte de Blizzard en material fuera del juego.</li>
       <li>Más de un botón carmesí por vista.</li>
       <li>Texto gris sobre carmesí o arcano sobre oro: no se lee.</li>
       <li>Degradados en el texto dentro del juego; el relieve es solo del logotipo.</li>
+      <li>Escribir el logotipo como “WOAI” o “Woai”: siempre W, o minúscula, AI.</li>
     </ul></div>
   </div>
 </section>

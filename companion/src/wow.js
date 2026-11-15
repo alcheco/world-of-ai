@@ -66,7 +66,7 @@ export function candidateWowDirs(platform = process.platform, home = os.homedir(
     ];
     return [...new Set(dirs)];
   }
-  return [MAC_DEFAULT, path.join(home, 'Applications', 'World of Warcraft', FLAVOR), path.join('/Users/Shared/World of Warcraft', FLAVOR)];
+  return [MAC_DEFAULT, path.posix.join(home, 'Applications', 'World of Warcraft', FLAVOR), path.posix.join('/Users/Shared/World of Warcraft', FLAVOR)];
 }
 
 /** Todas las carpetas de WoW encontradas. */

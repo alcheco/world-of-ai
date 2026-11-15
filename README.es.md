@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/brand/banner.png" alt="WoAI · Claude · Codex: tus conversaciones con Claude Code y Codex, sin salir de WoW Forever" width="100%"></p>
+<p align="center"><img src="assets/banner.png" alt="WoAI · Claude · Codex: tus conversaciones con Claude Code y Codex, sin salir de WoW Forever" width="100%"></p>
 
 # WoAI
 
@@ -11,7 +11,7 @@ Addon para **WoW Forever** (interfaz `16001`) para leer y continuar tus conversa
 La app de escritorio **WoAI** instala el addon, deja el companion funcionando en segundo plano y te deja configurarlo todo sin terminal. No hace falta Node.
 
 1. Descarga el instalador desde [Releases](https://github.com/alcheco/world-of-ai/releases/latest):
-   - **macOS:** `WoAI_…_aarch64.dmg` (Apple Silicon) o `WoAI_…_x64.dmg` (Intel). Ábrelo y arrastra **WoAI** a **Aplicaciones**.
+   - **macOS:** `WoAI_…_AppleSilicon.dmg` (chip M1 o posterior) o `WoAI_…_Intel.dmg`. Ábrelo y arrastra **WoAI** a **Aplicaciones**.
    - **Windows:** `WoAI_…_x64-setup.exe`.
 2. Abre WoAI. Un asistente corto te pide el idioma, encuentra WoW Forever, detecta `claude` y `codex`, te deja elegir qué pueden hacer los agentes e instala el addon.
 3. **Cierra WoW del todo y vuelve a abrirlo**, y activa **WoAI** y todos los **WoAI slot** en AddOns (pasos 4 y 5 de abajo).
