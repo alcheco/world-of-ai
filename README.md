@@ -13,7 +13,7 @@ An addon for **WoW Forever** (interface `16001`) to read and continue your **Cla
 The **WoAI** desktop app installs the addon, runs the companion in the background and lets you configure everything without a terminal. You don't need Node.
 
 1. Download the installer from [Releases](https://github.com/alcheco/world-of-ai/releases/latest):
-   - **macOS:** `WoAI_…_aarch64.dmg` (Apple Silicon) or `WoAI_…_x64.dmg` (Intel). Open it and drag **WoAI** onto **Applications**.
+   - **macOS:** `WoAI_…_AppleSilicon.dmg` (M1 chip or later) or `WoAI_…_Intel.dmg`. Open it and drag **WoAI** onto **Applications**.
    - **Windows:** `WoAI_…_x64-setup.exe`.
 2. Open WoAI. A short wizard asks for the language, finds WoW Forever, detects `claude` and `codex`, lets you choose what the agents may do, and installs the addon.
 3. **Fully quit WoW and reopen it**, then enable **WoAI** and every **WoAI slot** under AddOns (steps 4 and 5 below).

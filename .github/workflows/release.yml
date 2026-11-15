@@ -18,17 +18,22 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-latest # Apple Silicon
+          # asset: nombre de los archivos subidos al Release ("" = el de Tauri). En macOS se usa el chip
+          # en vez de aarch64/x64 para que se entienda cuál descargar.
+          - os: macos-latest
             args: --bundles app,dmg
-          - os: macos-15-intel # Intel
+            asset: '[name]_[version]_AppleSilicon[ext]'
+          - os: macos-15-intel
             args: --bundles app,dmg
+            asset: '[name]_[version]_Intel[ext]'
           - os: windows-latest
             args: --bundles nsis
+            asset: ''
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: npm
@@ -118,9 +123,10 @@ jobs:
           tagName: ${{ github.ref_name }}
           releaseName: WoAI ${{ github.ref_name }}
           releaseBody: |
-            **macOS:** descarga el `.dmg` (aarch64 = Apple Silicon, x64 = Intel), ábrelo y arrastra WoAI a Aplicaciones.
+            **macOS:** descarga `WoAI_…_AppleSilicon.dmg` (chip M1 o posterior) o `WoAI_…_Intel.dmg`, ábrelo y arrastra WoAI a Aplicaciones.
             **Windows:** descarga y ejecuta `WoAI_…_x64-setup.exe`.
             Si ya tienes WoAI, se actualiza solo.
           releaseDraft: true
           prerelease: ${{ contains(github.ref_name, '-') }}
           args: ${{ matrix.args }}
+          assetNamePattern: ${{ matrix.asset }}
