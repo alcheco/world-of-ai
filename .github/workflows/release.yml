@@ -52,6 +52,28 @@ jobs:
         working-directory: app
         run: npm ci
 
+      # Firma y notarización de Apple (opcional). Un secreto que no existe llega como "" y Tauri
+      # intenta importarlo como .p12 y falla, así que solo se exportan los que tienen valor.
+      - name: Firma de Apple (si hay secretos)
+        if: runner.os == 'macOS'
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          if [ -z "$APPLE_CERTIFICATE" ]; then
+            echo "Sin APPLE_CERTIFICATE: la app se firma ad-hoc y va sin notarizar."
+            exit 0
+          fi
+          for v in APPLE_CERTIFICATE APPLE_CERTIFICATE_PASSWORD APPLE_SIGNING_IDENTITY APPLE_ID APPLE_PASSWORD APPLE_TEAM_ID; do
+            if [ -n "${!v}" ]; then
+              { echo "$v<<__EOF__"; printf '%s\n' "${!v}"; echo "__EOF__"; } >> "$GITHUB_ENV"
+            fi
+          done
+
       # beforeBuildCommand compila el sidecar del companion con Node SEA y copia el addon.
       - uses: tauri-apps/tauri-action@v0
         env:
@@ -60,13 +82,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
-          # Firma y notarización de Apple (opcional; sin ellas la app va sin notarizar).
-          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          # Las variables APPLE_* llegan por $GITHUB_ENV desde el paso anterior.
         with:
           projectPath: app
           tagName: ${{ github.ref_name }}
