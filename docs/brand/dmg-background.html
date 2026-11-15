@@ -1,0 +1,74 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>WoAI dmg background</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&family=Cinzel:wght@700&family=Alegreya+Sans:wght@400;500&display=block">
+<style>
+/* Fondo de la ventana del .dmg: 660×400 pt, exportar con export-banner.sh (2x, 144 ppp).
+   Finder dibuja encima la app en (180,190) y Aplicaciones en (480,190), iconos de 128 pt.
+   Misma estética que banner.html. */
+html,body{margin:0;background:#07090d}
+.bg{position:relative;width:660px;height:400px;overflow:hidden;box-sizing:border-box;
+  background:radial-gradient(ellipse 70% 80% at 50% 48%,#14294a 0%,#0b1626 48%,#07090d 100%);
+  border:2px solid #6b5226;outline:2px solid #000;outline-offset:-4px}
+.bg::before{content:"";position:absolute;inset:7px;border:1px solid rgba(201,162,74,.28);pointer-events:none}
+
+.lockup{position:absolute;top:22px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:12px}
+.lockup img{width:76px;height:76px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.7))}
+.wordmark{display:flex;flex-direction:column;align-items:center;gap:4px}
+.wm{font:900 54px/1 "Cinzel Decorative",serif;letter-spacing:.01em;
+  padding:.32em .18em .26em;margin:-.32em -.18em -.26em;
+  background:linear-gradient(180deg,#fff7d1 0%,#ffe27a 30%,#e0a823 55%,#a8701a 75%,#f5cf62 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:.6px #4a2e06;
+  filter:drop-shadow(0 1px 0 #3a2405) drop-shadow(0 0 1px #000) drop-shadow(0 3px 5px rgba(0,0,0,.8))}
+.wm .o{font-size:.72em;background:inherit;-webkit-background-clip:text;background-clip:text}
+.ribbon{font:700 8px/1 "Cinzel",serif;letter-spacing:.3em;text-transform:uppercase;color:#ffd100;
+  background:linear-gradient(180deg,#8a1c1c,#4d0d0d);padding:5px 18px;border-block:1px solid #c9a24a;
+  clip-path:polygon(0 0,100% 0,calc(100% - 8px) 50%,100% 100%,0 100%,8px 50%)}
+
+/* Halos bajo los iconos que pinta Finder. */
+.halo{position:absolute;top:190px;width:176px;height:176px;margin:-88px 0 0 -88px;border-radius:50%;
+  background:radial-gradient(circle,rgba(143,211,255,.16) 0%,rgba(143,211,255,.05) 45%,transparent 70%)}
+.halo::after{content:"";position:absolute;inset:14px;border-radius:50%;border:1px dashed rgba(201,162,74,.28)}
+
+.arrow{position:absolute;top:190px;left:258px;width:146px;height:26px;margin-top:-13px}
+
+.hint{position:absolute;left:0;right:0;text-align:center;font-family:"Alegreya Sans",sans-serif}
+.hint.main{top:300px;font-size:14px;font-weight:500;color:#d7dde6;letter-spacing:.02em}
+.hint.main b{color:#ffd100;font-weight:500}
+.hint.sub{top:322px;font-size:12px;color:#7d8899}
+.sep{color:#6b5226;margin:0 8px}
+
+.palette{position:absolute;left:0;right:0;bottom:0;height:4px;display:flex}
+.palette i{flex:1}
+</style>
+<div class="bg">
+  <div class="lockup">
+    <img src="emblem.svg" alt="">
+    <div class="wordmark">
+      <div class="wm">W<span class="o">o</span>AI</div>
+      <div class="ribbon">Claude · Codex</div>
+    </div>
+  </div>
+
+  <div class="halo" style="left:180px"></div>
+  <div class="halo" style="left:480px"></div>
+
+  <svg class="arrow" viewBox="0 0 146 26">
+    <defs>
+      <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="4" y1="0" x2="118" y2="0">
+        <stop offset="0" stop-color="#a8701a" stop-opacity=".3"/><stop offset=".7" stop-color="#e0a823"/><stop offset="1" stop-color="#ffe27a"/>
+      </linearGradient>
+    </defs>
+    <line x1="4" y1="13" x2="118" y2="13" stroke="url(#g)" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 10"/>
+    <path d="M120 2 L144 13 L120 24 L126 13 Z" fill="#ffd100" stroke="#4a2e06" stroke-width="1" stroke-linejoin="round"/>
+  </svg>
+
+  <div class="hint main">Arrastra <b>WoAI</b> a Aplicaciones<span class="sep">◆</span>Drag <b>WoAI</b> to Applications</div>
+  <div class="hint sub">Después ábrelo desde Aplicaciones<span class="sep">·</span>Then open it from Applications</div>
+
+  <div class="palette">
+    <i style="background:#8fd3ff"></i><i style="background:#ffd100"></i><i style="background:#c9a24a"></i>
+    <i style="background:#6b5226"></i><i style="background:#6e1616"></i><i style="background:#2e4261"></i>
+    <i style="background:#33ff99"></i><i style="background:#bfe6bf"></i>
+  </div>
+</div>
