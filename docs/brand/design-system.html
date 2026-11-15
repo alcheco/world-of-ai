@@ -1,0 +1,391 @@
+<title>WoAI Design System</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@500;700&family=Alegreya+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: una sola columna tipo "grimorio", secciones como paneles de la UI del juego. Tema oscuro único a propósito: el addon vive dentro de WoW. */
+:root{
+  color-scheme: dark;
+  --void:#07090d; --panel:#0f0f14; --panel-2:#1a1a21; --hover:#333347;
+  --edge:#40404d; --bronze:#6b5226; --metal:#c9a24a; --metal-hi:#fff1b8;
+  --gold:#ffd100; --arcane:#8fd3ff; --arcane-deep:#0b1a2e;
+  --text:#e0e0e0; --muted:#8a8a94; --ok:#33ff99; --err:#ff5555; --code:#bfe6bf;
+  --select:#2e4261; --select-edge:#6699e6; --crimson:#6e1616;
+  --f-logo:"Cinzel Decorative","Cinzel",Georgia,serif;
+  --f-head:"Cinzel",Georgia,"Times New Roman",serif;
+  --f-body:"Alegreya Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{background:var(--void);color:var(--text);font:17px/1.6 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--f-head);font-weight:700;text-wrap:balance;margin:0;color:var(--gold);letter-spacing:.02em}
+h2{font-size:26px} h3{font-size:17px;color:var(--metal)}
+p{margin:0;max-width:65ch}
+.eyebrow{font:500 12px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--arcane)}
+code,.mono{font-family:var(--f-mono);font-size:.86em}
+section{display:flex;flex-direction:column;gap:20px}
+.sec-head{display:flex;flex-direction:column;gap:8px;padding-bottom:12px;border-bottom:1px solid var(--bronze)}
+.frame{background:var(--panel);border:1px solid var(--bronze);outline:1px solid #000;box-shadow:inset 0 0 0 1px #2a2110, 0 0 0 3px #000;padding:20px;border-radius:2px}
+
+/* hero */
+.hero{display:flex;flex-direction:column;align-items:center;gap:20px;padding:56px 0 24px;text-align:center;
+  background:radial-gradient(ellipse 60% 70% at 50% 40%, #12243b 0%, transparent 70%)}
+.lockup{display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center}
+.lockup svg{width:clamp(110px,22vw,168px);height:auto;flex:none}
+.wordmark{display:flex;flex-direction:column;align-items:center;gap:6px}
+.wm{font:900 clamp(64px,13vw,124px)/.9 var(--f-logo);letter-spacing:.01em;
+  background:linear-gradient(180deg,#fff7d1 0%,#ffe27a 30%,#e0a823 55%,#a8701a 75%,#f5cf62 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 2px 0 #3a2405) drop-shadow(0 0 1px #000) drop-shadow(0 6px 10px rgba(0,0,0,.8));
+  -webkit-text-stroke:1px #4a2e06}
+.ribbon{font:700 14px/1 var(--f-head);letter-spacing:.32em;text-transform:uppercase;color:var(--gold);
+  background:linear-gradient(180deg,#8a1c1c,#4d0d0d);padding:9px 34px;border-block:1px solid var(--metal);
+  clip-path:polygon(0 0,100% 0,calc(100% - 14px) 50%,100% 100%,0 100%,14px 50%)}
+.tag{color:var(--muted);max-width:52ch}
+
+/* logo variants */
+.variants{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.variant{display:flex;flex-direction:column;gap:14px}
+.stage{display:flex;align-items:center;justify-content:center;gap:18px;min-height:150px;border-radius:2px;flex-wrap:wrap}
+.stage.dark{background:var(--arcane-deep)}
+.stage.parch{background:#e9dcb8}
+.stage.black{background:#000}
+.label{font-size:14px;color:var(--muted)}
+.label b{color:var(--text);font-weight:500}
+.sizes svg{display:block}
+.mm{width:44px;height:44px;position:relative}
+.wm-flat{font:900 40px/1 var(--f-logo);color:#2a1a05}
+.wm-mono{font:900 40px/1 var(--f-logo);color:#fff}
+
+/* palette */
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.sw{background:var(--panel-2);border:1px solid var(--edge);display:flex;flex-direction:column}
+.sw i{display:block;height:64px;border-bottom:1px solid #000}
+.sw div{padding:10px 12px;display:flex;flex-direction:column;gap:2px;font-size:14px}
+.sw b{font-weight:500}
+.sw span{font:12px/1.4 var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.new{font:500 10px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--arcane);border:1px solid var(--arcane);padding:2px 5px;align-self:flex-start;margin-top:4px}
+
+/* type */
+.type-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.spec{display:flex;flex-direction:column;gap:10px}
+.spec .sample{min-height:56px;display:flex;align-items:center}
+.spec dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:14px}
+.spec dt{color:var(--muted)} .spec dd{margin:0;font-family:var(--f-mono);font-size:13px;min-width:0;overflow-wrap:anywhere}
+
+/* components */
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{font:700 13px/1 var(--f-head);letter-spacing:.06em;padding:9px 18px;border-radius:3px;cursor:pointer;color:var(--gold);
+  background:linear-gradient(180deg,#9b2116 0%,#6a120b 55%,#470a05 100%);border:1px solid #c9a24a;box-shadow:inset 0 1px 0 rgba(255,220,150,.35),0 1px 0 #000}
+.btn:hover{filter:brightness(1.18)} .btn:focus-visible{outline:2px solid var(--arcane);outline-offset:2px}
+.btn.sec{background:linear-gradient(180deg,#3a3a44,#1d1d24);color:var(--text);border-color:var(--edge)}
+.btn.ghost{background:none;border-color:transparent;color:var(--arcane);box-shadow:none}
+.btn[disabled]{filter:grayscale(1) brightness(.7);cursor:not-allowed}
+.pill{font:500 13px/1 var(--f-body);padding:5px 10px;border:1px solid currentColor;border-radius:2px;background:rgba(0,0,0,.35)}
+.tip{background:#05070cee;border:1px solid var(--edge);outline:1px solid #000;padding:10px 12px;max-width:260px;font-size:14px;line-height:1.45;border-radius:4px}
+.tip .t{color:var(--arcane);font-weight:500} .tip .g{color:var(--ok)} .tip .m{color:var(--muted)}
+
+/* window mock */
+.scroll-x{overflow-x:auto}
+.win{min-width:720px;background:#0f0f14f2;border:1px solid var(--bronze);outline:2px solid #000;box-shadow:0 0 0 3px #2a2110,0 18px 40px rgba(0,0,0,.7);font-size:14px}
+.win-top{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--edge);background:linear-gradient(180deg,#1b1b23,#0f0f14)}
+.win-top .ttl{font:700 16px/1 var(--f-head);color:var(--arcane)} .win-top .ttl span{color:var(--muted);font-weight:500}
+.win-top .x{width:20px;height:20px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#c33,#600);border:1px solid var(--metal);color:#fdd;font:700 11px/18px var(--f-body);text-align:center}
+.win-body{display:grid;grid-template-columns:240px 1fr;min-height:340px}
+.list{border-right:1px solid var(--edge);padding:8px;display:flex;flex-direction:column;gap:4px;background:#0b0b0f}
+.grp{color:var(--gold);font-weight:500;padding:8px 4px 4px;font-size:13px;border-bottom:1px solid rgba(143,211,255,.35)}
+.grp small{color:var(--muted);font-weight:400}
+.sess{display:flex;gap:8px;background:var(--panel-2);border:1px solid #2e2e38;padding:6px 8px 6px 0}
+.sess.on{background:var(--select);border-color:var(--select-edge)}
+.sess i{width:3px;align-self:stretch;flex:none}
+.sess b{display:block;font-weight:500;color:#fff;font-size:13px}
+.sess span{display:block;color:var(--muted);font-size:12px}
+.chat{display:flex;flex-direction:column}
+.chat-h{padding:10px 14px;border-bottom:1px solid var(--edge)}
+.chat-h b{color:var(--gold);font-weight:500} .chat-h span{display:block;color:var(--muted);font-size:12px}
+.msgs{flex:1;padding:14px;display:flex;flex-direction:column;gap:12px}
+.me{align-self:flex-end;max-width:70%;background:#1d2a3a;border:1px solid #33506e;padding:8px 10px;border-radius:2px}
+.ai{max-width:88%;display:flex;flex-direction:column;gap:6px}
+.ai .who{font-size:12px;color:var(--arcane)}
+.ai h4{margin:0;color:var(--gold);font:500 15px/1.3 var(--f-body)}
+.ai pre{margin:0;background:#000;border:1px solid #222;padding:8px 10px;color:var(--code);font:12.5px/1.5 var(--f-mono);overflow-x:auto}
+.input{margin:0 14px 14px;border:1px solid var(--edge);background:#000;padding:9px 10px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+
+/* tokens code */
+pre.lua{margin:0;background:#000;border:1px solid var(--bronze);padding:16px;overflow-x:auto;font:13px/1.6 var(--f-mono);color:var(--text)}
+.k{color:#c792ea}.s{color:var(--code)}.n{color:#f2b36b}.c{color:#6b6b78}
+.copy{align-self:flex-start}
+
+/* rules */
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.rules ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px}
+.do h3{color:var(--ok)} .dont h3{color:var(--err)}
+footer{color:var(--muted);font-size:14px;text-align:center}
+@media (prefers-reduced-motion:no-preference){
+  .glow{animation:pulse 4s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.55}}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff4c2"/><stop offset=".35" stop-color="#f2c94c"/>
+      <stop offset=".6" stop-color="#a8701a"/><stop offset=".85" stop-color="#e6b84a"/><stop offset="1" stop-color="#6b4410"/>
+    </linearGradient>
+    <linearGradient id="goldIn" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#fff4c2"/><stop offset=".5" stop-color="#c08a26"/><stop offset="1" stop-color="#5a370a"/>
+    </linearGradient>
+    <radialGradient id="arc" cx=".5" cy=".42" r=".6">
+      <stop offset="0" stop-color="#1f4f80"/><stop offset=".6" stop-color="#0d2440"/><stop offset="1" stop-color="#040b16"/>
+    </radialGradient>
+    <radialGradient id="gem" cx=".4" cy=".35" r=".7">
+      <stop offset="0" stop-color="#e8f7ff"/><stop offset=".4" stop-color="#8fd3ff"/><stop offset="1" stop-color="#1b5d96"/>
+    </radialGradient>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter>
+    <symbol id="emblem" viewBox="0 0 200 220">
+      <path d="M100 4 L118 26 L100 40 L82 26 Z" fill="url(#gold)" stroke="#2a1a05" stroke-width="2.5"/>
+      <path d="M100 12 L110 26 L100 34 L90 26 Z" fill="url(#gem)"/>
+      <path d="M22 70 L4 58 L14 96 Z M178 70 L196 58 L186 96 Z" fill="url(#gold)" stroke="#2a1a05" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="100" cy="118" r="92" fill="url(#gold)" stroke="#2a1a05" stroke-width="3"/>
+      <circle cx="100" cy="118" r="80" fill="url(#goldIn)" stroke="#2a1a05" stroke-width="2"/>
+      <g fill="#fff1b8" stroke="#3a2405" stroke-width="1.5">
+        <circle cx="100" cy="32" r="4"/><circle cx="186" cy="118" r="4"/><circle cx="100" cy="204" r="4"/><circle cx="14" cy="118" r="4"/>
+        <circle cx="161" cy="57" r="3.2"/><circle cx="161" cy="179" r="3.2"/><circle cx="39" cy="179" r="3.2"/><circle cx="39" cy="57" r="3.2"/>
+      </g>
+      <circle cx="100" cy="118" r="72" fill="url(#arc)" stroke="#000" stroke-width="2"/>
+      <g fill="none" stroke="#8fd3ff" stroke-linecap="round" stroke-linejoin="round" opacity=".35" stroke-width="1.2">
+        <circle cx="100" cy="118" r="62" stroke-dasharray="2 6"/>
+      </g>
+      <g class="glow" filter="url(#soft)" opacity=".9" fill="none" stroke="#8fd3ff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M58 90 Q58 80 68 80 H132 Q142 80 142 90 V136 Q142 146 132 146 H92 L72 164 L76 146 H68 Q58 146 58 136 Z"/>
+      </g>
+      <g fill="none" stroke="#dff4ff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M58 90 Q58 80 68 80 H132 Q142 80 142 90 V136 Q142 146 132 146 H92 L72 164 L76 146 H68 Q58 146 58 136 Z"/>
+        <path d="M78 100 L96 113 L78 126" stroke="#8fd3ff" stroke-width="7"/>
+        <path d="M104 128 H124" stroke="#ffd100" stroke-width="7"/>
+      </g>
+      <g fill="#dff4ff">
+        <path d="M150 64 l2 6 6 2 -6 2 -2 6 -2 -6 -6 -2 6 -2z"/><path d="M48 160 l1.5 4.5 4.5 1.5 -4.5 1.5 -1.5 4.5 -1.5 -4.5 -4.5 -1.5 4.5 -1.5z"/>
+      </g>
+    </symbol>
+    <symbol id="emblem-flat" viewBox="0 0 200 220">
+      <path d="M100 4 L118 26 L100 40 L82 26 Z M22 70 L4 58 L14 96 Z M178 70 L196 58 L186 96 Z" fill="currentColor"/>
+      <circle cx="100" cy="118" r="92" fill="currentColor"/>
+      <circle cx="100" cy="118" r="76" fill="none" stroke="var(--knock)" stroke-width="6"/>
+      <g fill="none" stroke="var(--knock)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M58 90 Q58 80 68 80 H132 Q142 80 142 90 V136 Q142 146 132 146 H92 L72 164 L76 146 H68 Q58 146 58 136 Z"/>
+        <path d="M78 100 L96 113 L78 126"/><path d="M104 128 H124"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="lockup">
+    <svg viewBox="0 0 200 220" role="img" aria-label="Emblema de WoAI"><use href="#emblem"/></svg>
+    <div class="wordmark">
+      <div class="wm" aria-label="WoAI">WoAI</div>
+      <div class="ribbon">Claude · Codex</div>
+    </div>
+  </div>
+  <p class="tag">Sistema visual del addon WoAI: emblema, paleta, tipografía y piezas de interfaz, con sus valores listos para Lua.</p>
+</header>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">01 · Marca</span><h2>Emblema y logotipo</h2>
+    <p>El emblema es un medallón de oro con alas cortas y una gema arcana. Dentro hay un globo de diálogo con el prompt <code>&gt;_</code>: conversar y programar en el mismo gesto. El oro en relieve y el azul arcano vienen del lenguaje visual de los MMO de fantasía, sin copiar ningún logo existente.</p></div>
+  <div class="variants">
+    <div class="variant frame">
+      <div class="stage dark">
+        <svg viewBox="0 0 200 220" width="96" height="106" role="img" aria-label="Emblema a color"><use href="#emblem"/></svg>
+      </div>
+      <div class="label"><b>Emblema a color.</b> Icono del addon, CurseForge y avatar.</div>
+    </div>
+    <div class="variant frame">
+      <div class="stage black sizes">
+        <svg viewBox="0 0 200 220" width="64" height="70" aria-hidden="true"><use href="#emblem"/></svg>
+        <svg viewBox="0 0 200 220" width="32" height="35" aria-hidden="true"><use href="#emblem"/></svg>
+        <svg viewBox="0 0 200 220" width="16" height="18" aria-hidden="true"><use href="#emblem"/></svg>
+      </div>
+      <div class="label"><b>64 · 32 · 16 px.</b> Por debajo de 32 px se exporta sin alas ni remaches para el botón del minimapa.</div>
+    </div>
+    <div class="variant frame">
+      <div class="stage parch">
+        <svg viewBox="0 0 200 220" width="64" height="70" style="color:#2a1a05;--knock:#e9dcb8" aria-hidden="true"><use href="#emblem-flat"/></svg>
+        <span class="wm-flat">WoAI</span>
+      </div>
+      <div class="label"><b>Monocromo sobre pergamino.</b> Documentación impresa y sellos.</div>
+    </div>
+    <div class="variant frame">
+      <div class="stage black">
+        <svg viewBox="0 0 200 220" width="64" height="70" style="color:#fff;--knock:#000" aria-hidden="true"><use href="#emblem-flat"/></svg>
+        <span class="wm-mono">WoAI</span>
+      </div>
+      <div class="label"><b>Monocromo invertido.</b> Fondos de captura y vídeo.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">02 · Color</span><h2>Paleta</h2>
+    <p>Sale de los colores que <code>UI.lua</code> y <code>Markdown.lua</code> ya usan, más tres tonos nuevos para dar al marco un acabado de metal. Cada muestra lleva el RGB en flotantes que pide <code>SetTextColor</code> y el código de escape <code>|cff</code>.</p></div>
+  <div class="swatches">
+    <div class="sw"><i style="background:#8fd3ff"></i><div><b>Arcano</b><span>0.56, 0.83, 1.00</span><span>|cff8fd3ff</span><span>Marca, título, enlaces</span></div></div>
+    <div class="sw"><i style="background:#ffd100"></i><div><b>Oro de interfaz</b><span>1.00, 0.82, 0.00</span><span>|cffffd100</span><span>Encabezados, proyectos, “en cola”</span></div></div>
+    <div class="sw"><i style="background:#c9a24a"></i><div><b>Metal</b><span>0.79, 0.64, 0.29</span><span>|cffc9a24a</span><span>Bordes de botón, emblema</span><em class="new">nuevo</em></div></div>
+    <div class="sw"><i style="background:#6b5226"></i><div><b>Bronce</b><span>0.42, 0.32, 0.15</span><span>|cff6b5226</span><span>Borde de ventana</span><em class="new">nuevo</em></div></div>
+    <div class="sw"><i style="background:#6e1616"></i><div><b>Carmesí</b><span>0.43, 0.09, 0.09</span><span>|cff6e1616</span><span>Botón principal, cinta</span><em class="new">nuevo</em></div></div>
+    <div class="sw"><i style="background:#0f0f14"></i><div><b>Panel</b><span>0.06, 0.06, 0.08</span><span>alpha 0.95</span><span>Fondo de ventana</span></div></div>
+    <div class="sw"><i style="background:#1a1a21"></i><div><b>Panel 2</b><span>0.10, 0.10, 0.13</span><span>|cff1a1a21</span><span>Filas de sesión</span></div></div>
+    <div class="sw"><i style="background:#2e4261"></i><div><b>Selección</b><span>0.18, 0.26, 0.38</span><span>borde 0.40, 0.60, 0.90</span><span>Sesión activa</span></div></div>
+    <div class="sw"><i style="background:#33ff99"></i><div><b>Listo</b><span>0.20, 1.00, 0.60</span><span>|cff33ff99</span><span>Estado “listo”, sin leer</span></div></div>
+    <div class="sw"><i style="background:#ff5555"></i><div><b>Error</b><span>1.00, 0.33, 0.33</span><span>|cffff5555</span><span>Fallos del companion</span></div></div>
+    <div class="sw"><i style="background:#bfe6bf"></i><div><b>Código</b><span>0.75, 0.90, 0.75</span><span>|cffbfe6bf</span><span>Bloques de código</span></div></div>
+    <div class="sw"><i style="background:#e0e0e0"></i><div><b>Texto</b><span>0.88, 0.88, 0.88</span><span>|cffe0e0e0</span><span>Cuerpo de respuesta</span></div></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">03 · Tipografía</span><h2>Tipos de letra</h2>
+    <p>Dentro del juego se usan solo los objetos de fuente del cliente, que ya cargan Friz Quadrata y Arial Narrow. Fuera del juego (web, README, CurseForge), Cinzel cumple el papel de Friz y Alegreya Sans el del cuerpo.</p></div>
+  <div class="type-grid">
+    <div class="spec frame">
+      <h3>Logotipo</h3>
+      <div class="sample" style="font:900 40px/1 var(--f-logo);color:var(--gold)">WoAI</div>
+      <dl><dt>Web</dt><dd>Cinzel Decorative 900</dd><dt>Juego</dt><dd>textura del logotipo, nunca texto</dd></dl>
+    </div>
+    <div class="spec frame">
+      <h3>Títulos</h3>
+      <div class="sample" style="font:700 24px/1.2 var(--f-head);color:var(--gold)">Sin proyecto · 3 sesiones</div>
+      <dl><dt>Web</dt><dd>Cinzel 700</dd><dt>Juego</dt><dd>GameFontNormalLarge / GameFontNormal</dd></dl>
+    </div>
+    <div class="spec frame">
+      <h3>Cuerpo</h3>
+      <div class="sample" style="font:400 17px/1.5 var(--f-body)">Listo. Añadí la opción en el menú de nueva conversación.</div>
+      <dl><dt>Web</dt><dd>Alegreya Sans 400/500</dd><dt>Juego</dt><dd>GameFontHighlight · ChatFontNormal</dd></dl>
+    </div>
+    <div class="spec frame">
+      <h3>Código</h3>
+      <div class="sample" style="font:400 14px/1.5 var(--f-mono);color:var(--code)">git commit -m "fix"</div>
+      <dl><dt>Web</dt><dd>JetBrains Mono 400</dd><dt>Juego</dt><dd>Fonts\ARIALN.TTF 13</dd></dl>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">04 · Componentes</span><h2>Piezas de interfaz</h2></div>
+  <div class="comp-grid">
+    <div class="frame spec">
+      <h3>Botones</h3>
+      <div class="row">
+        <button class="btn" id="b1">Enviar</button>
+        <button class="btn sec" id="b2">Nueva conversación</button>
+        <button class="btn ghost" id="b3">Reenviar</button>
+        <button class="btn" id="b4" disabled>Enviando…</button>
+      </div>
+      <p class="label">Uno solo carmesí por vista: la acción principal. El resto, gris o texto arcano.</p>
+    </div>
+    <div class="frame spec">
+      <h3>Estados de sesión</h3>
+      <div class="row">
+        <span class="pill" style="color:var(--gold)">en cola</span>
+        <span class="pill" style="color:var(--gold)">ejecutando…</span>
+        <span class="pill" style="color:var(--ok)">listo</span>
+        <span class="pill" style="color:var(--err)">error</span>
+      </div>
+      <p class="label">El color se repite en la franja izquierda de la fila para que se lea sin abrirla.</p>
+    </div>
+    <div class="frame spec">
+      <h3>Tooltip del minimapa</h3>
+      <div class="row">
+        <svg class="mm" viewBox="0 0 200 220" aria-hidden="true"><use href="#emblem"/></svg>
+        <div class="tip"><div class="t">WoAI</div><div class="g">Companion conectado</div><div>2 respuestas sin leer</div><div class="m">Clic: abrir · Arrastrar: mover</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-x">
+    <div class="win" role="img" aria-label="Maqueta de la ventana principal del addon">
+      <div class="win-top"><div class="ttl">WoAI <span>· Claude &amp; Codex</span></div><div class="x">×</div></div>
+      <div class="win-body">
+        <div class="list">
+          <div class="grp">woai <small>· 3</small></div>
+          <div class="sess on"><i style="background:var(--ok)"></i><div><b>Logo y design system</b><span>main · listo</span></div></div>
+          <div class="sess"><i style="background:var(--gold)"></i><div><b>Instalador del companion</b><span>ejecutando…</span></div></div>
+          <div class="sess"><i style="background:var(--err)"></i><div><b>Uplink por captura</b><span>error · hace 2 h</span></div></div>
+          <div class="grp" style="color:var(--muted)">Sin proyecto <small>· 1</small></div>
+          <div class="sess"><i style="background:var(--ok)"></i><div><b>Ideas de rotación</b><span>listo</span></div></div>
+        </div>
+        <div class="chat">
+          <div class="chat-h"><b>Logo y design system</b><span>Claude Code · /Developer/woai</span></div>
+          <div class="msgs">
+            <div class="me">haz algo más cercano al estilo wow</div>
+            <div class="ai"><span class="who">Claude</span><h4>Paleta para Lua</h4><div>Añadí <span class="mono" style="color:var(--code)">Theme.lua</span> con los tokens:</div><pre>ns.Theme.arcane = { 0.56, 0.83, 1 }</pre></div>
+          </div>
+          <div class="input"><span>Escribe un mensaje…</span><span class="btn" style="padding:6px 12px;font-size:11px">Enviar</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">05 · Tokens</span><h2>Theme.lua</h2>
+    <p>Los mismos valores como tabla del addon, para dejar de repetir números sueltos en <code>UI.lua</code>.</p></div>
+  <pre class="lua" id="lua"><span class="k">local</span> _, ns = ...
+ns.Theme = {
+  arcane     = { <span class="n">0.56</span>, <span class="n">0.83</span>, <span class="n">1.00</span> },  <span class="c">-- marca</span>
+  gold       = { <span class="n">1.00</span>, <span class="n">0.82</span>, <span class="n">0.00</span> },  <span class="c">-- encabezados</span>
+  metal      = { <span class="n">0.79</span>, <span class="n">0.64</span>, <span class="n">0.29</span> },
+  bronze     = { <span class="n">0.42</span>, <span class="n">0.32</span>, <span class="n">0.15</span> },  <span class="c">-- borde de ventana</span>
+  crimson    = { <span class="n">0.43</span>, <span class="n">0.09</span>, <span class="n">0.09</span> },
+  panel      = { <span class="n">0.06</span>, <span class="n">0.06</span>, <span class="n">0.08</span>, <span class="n">0.95</span> },
+  panel2     = { <span class="n">0.10</span>, <span class="n">0.10</span>, <span class="n">0.13</span> },
+  hover      = { <span class="n">0.20</span>, <span class="n">0.20</span>, <span class="n">0.28</span> },
+  select     = { <span class="n">0.18</span>, <span class="n">0.26</span>, <span class="n">0.38</span> },
+  selectEdge = { <span class="n">0.40</span>, <span class="n">0.60</span>, <span class="n">0.90</span> },
+  text       = { <span class="n">0.88</span>, <span class="n">0.88</span>, <span class="n">0.88</span> },
+  code       = { <span class="n">0.75</span>, <span class="n">0.90</span>, <span class="n">0.75</span> },
+  ok         = { <span class="n">0.20</span>, <span class="n">1.00</span>, <span class="n">0.60</span> },
+  err        = { <span class="n">1.00</span>, <span class="n">0.33</span>, <span class="n">0.33</span> },
+  hex = { arcane = <span class="s">"8fd3ff"</span>, gold = <span class="s">"ffd100"</span>, ok = <span class="s">"33ff99"</span>, err = <span class="s">"ff5555"</span>, muted = <span class="s">"999999"</span> },
+}
+<span class="k">function</span> ns.Theme:Wrap(key, text) <span class="k">return</span> <span class="s">"|cff"</span> .. self.hex[key] .. text .. <span class="s">"|r"</span> <span class="k">end</span></pre>
+  <button class="btn sec copy" id="copy">Copiar Theme.lua</button>
+</section>
+
+<section>
+  <div class="sec-head"><span class="eyebrow">06 · Reglas</span><h2>Uso</h2></div>
+  <div class="rules">
+    <div class="frame do"><h3>Sí</h3><ul>
+      <li>Oro para jerarquía (títulos, proyectos) y arcano para la marca y lo interactivo.</li>
+      <li>Bordes de ventana en bronce con un filo negro, como los marcos del cliente.</li>
+      <li>Estado siempre en dos sitios: franja de color y texto.</li>
+      <li>Emblema sin alas por debajo de 32 px.</li>
+    </ul></div>
+    <div class="frame dont"><h3>No</h3><ul>
+      <li>Usar logotipos, tipografías ni arte de Blizzard en material fuera del juego.</li>
+      <li>Más de un botón carmesí por vista.</li>
+      <li>Texto gris sobre carmesí o arcano sobre oro: no se lee.</li>
+      <li>Degradados en el texto dentro del juego; el relieve es solo del logotipo.</li>
+    </ul></div>
+  </div>
+</section>
+
+<footer>WoAI 0.1.0 · Interface 16001</footer>
+</div>
+
+<script>
+document.getElementById('copy').addEventListener('click', async e => {
+  const btn = e.currentTarget, txt = document.getElementById('lua').innerText;
+  try { await navigator.clipboard.writeText(txt); btn.textContent = 'Copiado'; }
+  catch { const r = document.createRange(); r.selectNodeContents(document.getElementById('lua')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Seleccionado, pulsa ⌘C'; }
+  setTimeout(() => btn.textContent = 'Copiar Theme.lua', 2000);
+});
+</script>

@@ -30,10 +30,9 @@ function M:Init()
   bg:SetPoint("CENTER")
 
   local icon = b:CreateTexture(nil, "ARTWORK")
-  icon:SetTexture("Interface\\Icons\\INV_Misc_Book_09")
-  icon:SetSize(18, 18)
+  icon:SetTexture(ns.Theme.MINIMAP_ICON)
+  icon:SetSize(20, 20)
   icon:SetPoint("CENTER")
-  icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
   b.icon = icon
 
   local border = b:CreateTexture(nil, "OVERLAY")

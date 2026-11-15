@@ -4,11 +4,19 @@
   "description": "Puente entre el addon WoAI de WoW Forever y los CLIs de Claude Code y Codex",
   "type": "module",
   "private": true,
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "start": "node src/index.js",
     "once": "node src/index.js --once",
     "install-addon": "node src/install.js",
+    "uninstall-addon": "node src/install.js --uninstall",
+    "build:bin": "node scripts/build-sea.mjs",
     "test": "node --test"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "postject": "^1.0.0-alpha.6"
   }
 }

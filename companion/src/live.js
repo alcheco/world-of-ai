@@ -13,6 +13,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { toLua } from './lua.js';
+import { writeAtomic } from './fsx.js';
 
 export const slotName = (i) => `WoAI_S${String(i).padStart(3, '0')}`;
 export const sigIndex = (seq, n) => ((seq - 1) % n) + 1;
@@ -38,12 +39,6 @@ export function silentWav() {
   b.write('data', 36);
   b.writeUInt32LE(data, 40);
   return b;
-}
-
-function writeAtomic(file, content) {
-  const tmp = file + '.tmp';
-  fs.writeFileSync(tmp, content);
-  fs.renameSync(tmp, file);
 }
 
 function slotToc(i) {

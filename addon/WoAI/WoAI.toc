@@ -4,10 +4,11 @@
 ## Author: Alfonso Pacheco
 ## Version: 0.1.0
 ## SavedVariables: WoAI_DB
-## IconTexture: Interface\Icons\INV_Misc_Book_09
+## IconTexture: Interface\AddOns\WoAI\Media\WoAI-Icon
 ## AddonCompartmentFunc: WoAI_OnCompartmentClick
 
 Data.lua
+Theme.lua
 Core.lua
 Live.lua
 Uplink.lua

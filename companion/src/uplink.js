@@ -9,6 +9,7 @@ import os from 'node:os';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import { execFileSync } from 'node:child_process';
+import { log } from './log.js';
 
 const MAGIC = 'WOAI';
 const VERSION = 1;
@@ -68,6 +69,8 @@ export function decodePng(buf) {
 /** Lee cualquier formato de captura (png directo; jpg/tga vía `sips` de macOS). */
 export function readImage(file) {
   if (file.toLowerCase().endsWith('.png')) return decodePng(fs.readFileSync(file));
+  // Fuera de macOS solo se lee PNG (el addon pone screenshotFormat en png).
+  if (process.platform !== 'darwin') throw new Error('solo se leen capturas PNG en este sistema');
   const tmp = path.join(os.tmpdir(), `woai-shot-${process.pid}.png`);
   execFileSync('sips', ['-s', 'format', 'png', file, '--out', tmp], { stdio: 'ignore' });
   try {
@@ -232,7 +235,7 @@ export function scanScreenshots(dir, { minAgeMs = 500 } = {}) {
         seen.delete(file);
       }
     } catch (e) {
-      console.warn(`[uplink] no se pudo leer ${name}: ${e.message}`);
+      log('warn', 'uplink', 'uplink.readError', { file: name, error: e.message });
     }
   }
   return jobs;

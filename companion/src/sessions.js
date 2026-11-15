@@ -1,6 +1,7 @@
 // Lectura de sesiones locales de Claude Code (~/.claude/projects) y Codex (~/.codex/sessions).
 import fs from 'node:fs';
 import path from 'node:path';
+import { log } from './log.js';
 
 const cache = new Map(); // path -> { key, session }
 
@@ -18,7 +19,7 @@ function cached(file, parse) {
   try {
     session = parse(fs.readFileSync(file, 'utf8'));
   } catch (e) {
-    console.warn(`[sessions] no se pudo leer ${file}: ${e.message}`);
+    log('warn', 'sessions', 'sessions.readError', { file, error: e.message });
   }
   if (session) session.updatedAt = Math.floor(st.mtimeMs / 1000);
   cache.set(file, { key, session });
